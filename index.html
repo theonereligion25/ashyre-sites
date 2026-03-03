@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Neon Pac-Arcade</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  /* Reset */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    background: #000;
+    overflow-x: hidden;
+    font-family: 'Press Start 2P', cursive;
+    color: #00f0ff;
+    user-select: none;
+  }
+
+  /* CRT Scanlines Overlay */
+  body::before {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.03) 1px,
+      transparent 2px,
+      transparent 3px
+    );
+    mix-blend-mode: screen;
+    z-index: 9999;
+  }
+
+  /* Parallax Neon Grid Background */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 200vw;
+    height: 200vh;
+    background:
+      linear-gradient(0deg, transparent 49.9%, #00334444 50%, transparent 50.1%),
+      linear-gradient(90deg, transparent 49.9%, #00334444 50%, transparent 50.1%);
+    background-size: 40px 40px;
+    animation: gridMove 60s linear infinite;
+    z-index: 0;
+    opacity: 0.3;
+  }
+
+  @keyframes gridMove {
+    0% {background-position: 0 0, 0 0;}
+    100% {background-position: 800px 800px, 800px 800px;}
+  }
+
+  /* Parallax Neon City Silhouette */
+  #city {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120vw;
+    height: 150px;
+    background:
+      linear-gradient(90deg,
+        #ff2d9c 0%,
+        #ff2d9c 10%,
+        #00f0ff 30%,
+        #00f0ff 70%,
+        #ff2d9c 90%,
+        #ff2d9c 100%);
+    clip-path: polygon(
+      0% 100%, 5% 40%, 8% 60%, 10% 20%, 15% 80%, 18% 40%, 23% 90%, 28% 30%, 32% 85%,
+      38% 50%, 42% 90%, 47% 20%, 52% 80%, 58% 40%, 63% 90%, 67% 25%, 72% 85%, 78% 50%,
+      83% 95%, 88% 40%, 92% 80%, 96% 30%, 100% 100%, 100% 100%, 0% 100%
+    );
+    filter: drop-shadow(0 0 15px #ff2d9ccc);
+    opacity: 0.15;
+    z-index: 1;
+    animation: cityGlow 6s ease-in-out infinite alternate;
+  }
+  @keyframes cityGlow {
+    0% {filter: drop-shadow(0 0 12px #ff2d9c99);}
+    100% {filter: drop-shadow(0 0 25px #ff2d9ccc);}
+  }
+
+  /* Container */
+  .container {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    padding: 2rem 1rem 5rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  /* Hero text */
+  h1 {
+    font-size: 2.5rem;
+    color: #ff2d9c;
+    text-shadow:
+      0 0 8px #ff2d9c,
+      0 0 20px #ff2d9c,
+      0 0 30px #ff2d9caa;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+    color: #00f0ff;
+    margin-bottom: 4rem;
+    letter-spacing: 0.15em;
+    text-shadow:
+      0 0 6px #00f0ff,
+      0 0 12px #00f0ffbb;
+  }
+
+  /* Button */
+  button#start-btn {
+    background: linear-gradient(45deg, #ff2d9c, #00f0ff);
+    border: none;
+    color: #111;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    padding: 1rem 3rem;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow:
+      0 0 15px #ff2d9c,
+      0 0 30px #00f0ff inset;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  button#start-btn:hover {
+    background: linear-gradient(45deg, #ff59b3, #00ffff);
+    box-shadow:
+      0 0 30px #ff59b3,
+      0 0 60px #00ffff inset;
+  }
+  button#start-btn::before {
+    content: "";
+    position: absolute;
+    top: -30%;
+    left: -40%;
+    width: 180%;
+    height: 160%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(25deg);
+    animation: shine 3s linear infinite;
+  }
+  @keyframes shine {
+    0% {left: -40%;}
+    100% {left: 140%;}
+  }
+
+  /* Hero animation container */
+  .hero-canvas {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 180px;
+    margin: 0 auto 3rem;
+    overflow: visible;
+  }
+
+  /* Pac-Man */
+  #pacman {
+    position: absolute;
+    top: 50%;
+    left: -60px;
+    width: 60px;
+    height: 60px;
+    transform: translateY(-50%);
+    filter: drop-shadow(0 0 8px #ffd500cc);
+    z-index: 20;
+    animation: pacMove linear infinite;
+  }
+  @keyframes pacMove {
+    0% {left: -60px;}
+    100% {left: calc(100% + 60px);}
+  }
+
+  /* Pac-Man open/close mouth */
+  #pacman .mouth {
+    fill: #ffd500;
+    transform-origin: 20px 30px;
+    animation: mouthChomp 0.5s ease-in-out infinite;
+  }
+  @keyframes mouthChomp {
+    0%, 100% {transform: rotate(0deg);}
+    50% {transform: rotate(30deg);}
+  }
+
+  /* Dots container */
+  .dots {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 15;
+  }
+
+  /* Dot style */
+  .dot {
+    width: 14px;
+    height: 14px;
+    background: #ffd500;
+    border-radius: 50%;
+    box-shadow:
+      0 0 6px #ffd500cc,
+      inset 0 0 4px #fff8a7;
+    transition: opacity 0.3s ease;
+  }
+
+  .dot.eaten {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Ghosts container */
+  .ghosts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 5;
+  }
+
+  /* Ghost base style */
+  .ghost {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    bottom: 20%;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    filter:
+      drop-shadow(0 0 12px currentColor);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  /* Ghost body shapes with wavy bottom edge */
+  .ghost::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 18px;
+    background: inherit;
+    border-radius: 0 0 50% 50% / 100% 100% 0 0;
+    clip-path: polygon(
+      0% 0%, 10% 100%, 20% 0%, 30% 100%, 40% 0%, 50% 100%, 
+      60% 0%, 70% 100%, 80% 0%, 90% 100%, 100% 0%
+    );
+  }
+
+  /* Ghost eyes container */
+  .eyes {
+    position: absolute;
+    top: 17px;
+    left: 12px;
+    width: 36px;
+    height: 20px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+  }
+
+  /* Eye whites */
+  .eye {
+    width: 16px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50% / 60%;
+    filter: drop-shadow(0 0 3px #fffddfcc);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Pupils */
+  .pupil {
+    position: absolute;
+    top: 6px;
+    left: 5px;
+    width: 6px;
+    height: 8px;
+    background: #222;
+    border-radius: 50%;
+    animation: pupilDrift 4s infinite alternate;
+  }
+
+  /* Multiple pupils movement for eyes */
+  .ghost.red .pupil {
+    animation-delay: 0s;
+  }
+  .ghost.pink .pupil {
+    animation-delay: 1s;
+  }
+  .ghost.cyan .pupil {
+    animation-delay: 2s;
+  }
+  .ghost.orange .pupil {
+    animation-delay: 3s;
+  }
+
+  @keyframes pupilDrift {
+    0% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(4px) translateY(1px); }
+    100% { transform: translateX(0) translateY(0); }
+  }
+
+  /* Ghost colors */
+  .ghost.red {
+    color: #ff1744;
+    background: linear-gradient(180deg, #ff1744 0%, #b2102f 100%);
+    box-shadow:
+      0 0 15px #ff1744aa,
+      inset 0 -4px 12px #b2102fcc;
+  }
+  .ghost.pink {
+    color: #ff4081;
+    background: linear-gradient(180deg, #ff4081 0%, #b00055 100%);
+    box-shadow:
+      0 0 15px #ff4081aa,
+      inset 0 -4px 12px #b00055cc;
+  }
+  .ghost.cyan {
+    color: #00e5ff;
+    background: linear-gradient(180deg, #00e5ff 0%, #007ea7 100%);
+    box-shadow:
+      0 0 15px #00e5ffaa,
+      inset 0 -4px 12px #007ea7cc;
+  }
+  .ghost.orange {
+    color: #ff9100;
+    background: linear-gradient(180deg, #ff9100 0%, #b25a00 100%);
+    box-shadow:
+      0 0 15px #ff9100aa,
+      inset 0 -4px 12px #b25a00cc;
+  }
+
+  /* Floating animations for ghosts */
+  .ghost.red {
+    bottom: 25%;
+    left: 20%;
+    animation: floatX 16s ease-in-out infinite;
+  }
+  .ghost.pink {
+    bottom: 30%;
+    left: 75%;
+    animation: floatX 19s ease-in-out infinite reverse;
+  }
+  .ghost.cyan {
+    bottom: 40%;
+    left: 40%;
+    animation: floatX 17s ease-in-out infinite alternate;
+  }
+  .ghost.orange {
+    bottom: 35%;
+    left: 60%;
+    animation: floatX 20s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes floatX {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(20px) translateY(10px); }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.5rem;
+    }
+    h2 {
+      font-size: 0.8rem;
+    }
+    .hero-canvas {
+      height: 130px;
+      max-width: 100%;
+    }
+    #pacman {
+      width: 40px;
+      height: 40px;
+      filter: drop-shadow(0 0 6px #ffd500cc);
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+    }
+    .ghost {
+      width: 40px;
+      height: 40px;
+      bottom: 15%;
+    }
+    .ghost::after {
+      height: 12px;
+    }
+    .eyes {
+      top: 10px;
+      left: 8px;
+      width: 24px;
+      height: 14px;
+    }
+    .eye {
+      width: 10px;
+      height: 14px;
+    }
+    .pupil {
+      width: 4px;
+      height: 5px;
+      top: 4px;
+      left: 3px;
+    }
+    button#start-btn {
+      padding: 0.75rem 2rem;
+      font-size: 0.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="city"></div>
+
+<div class="ghosts" aria-hidden="true">
+  <div class="ghost red" aria-label="Red ghost">
+    <div class="eyes">
+      <div class="eye"><div class="pupil"></div></div>
+      <div class="eye"><div class="pupil"></div></div>
+    </div>
+  </div>
+  <div class="ghost pink" aria-label="Pink ghost">
+    <div class="eyes">
+      <div class="eye"><div class="pupil"></div></div>
+      <div class="eye"><div class="pupil"></div></div>
+    </div>
+  </div>
+  <div class="ghost cyan" aria-label="Cyan ghost">
+    <div class="eyes">
+      <div class="eye"><div class="pupil"></div></div>
+      <div class="eye"><div class="pupil"></div></div>
+    </div>
+  </div>
+  <div class="ghost orange" aria-label="Orange ghost">
+    <div class="eyes">
+      <div class="eye"><div class="pupil"></div></div>
+      <div class="eye"><div class="pupil"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container" role="main">
+  <h1>NEON PAC-ARCADE</h1>
+  <h2>CYBERPUNK CLASSIC REIMAGINED</h2>
+
+  <div class="hero-canvas" aria-label="Animated Pac-Man eating dots">
+    <svg id="pacman" viewBox="0 0 60 60" aria-hidden="true" focusable="false" role="img" >
+      <circle cx="30" cy="30" r="30" fill="#ffd500"/>
+      <path class="mouth" d="M30 30 L60 0 A30 30 0 1 1 30 60 Z" fill="#000"/>
+    </svg>
+
+    <div class="dots" aria-hidden="true">
+      <div class="dot" data-index="0"></div>
+      <div class="dot" data-index="1"></div>
+      <div class="dot" data-index="2"></div>
+      <div class="dot" data-index="3"></div>
+      <div class="dot" data-index="4"></div>
+      <div class="dot" data-index="5"></div>
+      <div class="dot" data-index="6"></div>
+      <div class="dot" data-index="7"></div>
+      <div class="dot" data-index="8"></div>
+      <div class="dot" data-index="9"></div>
+    </div>
+  </div>
+
+  <button id="start-btn" aria-label="Start Game">START GAME</button>
+</div>
+
+<script>
+  (() => {
+    const pacman = document.getElementById('pacman');
+    const dots = [...document.querySelectorAll('.dot')];
+    const heroCanvas = document.querySelector('.hero-canvas');
+    const pacmanWidth = 60; // px for desktop
+    const dotCount = dots.length;
+
+    // Calculate the spacing between dots based on container width
+    function updateDotsPositions() {
+      const rect = heroCanvas.getBoundingClientRect();
+      const spacing = rect.width / (dotCount + 1);
+      dots.forEach((dot, i) => {
+        dot.style.position = 'absolute';
+        dot.style.left = `${spacing * (i + 1) - dot.offsetWidth/2}px`;
+      });
+    }
+
+    // On resize reposition dots
+    window.addEventListener('resize', updateDotsPositions);
+    updateDotsPositions();
+
+    // We will animate Pac-Man from left to right, looped, and check collision with dots by position
+
+    // Pac-Man animation duration in ms
+    const animDuration = 10000;
+
+    // Start time
+    let startTime = null;
+
+    function easeLinear(t) { return t; }
+
+    // Pac-Man movement and eating logic
+    function animate(time) {
+      if (!startTime) startTime = time;
+      const elapsed = (time - startTime) % animDuration;
+      const progress = easeLinear(elapsed / animDuration);
+
+      const canvasRect = heroCanvas.getBoundingClientRect();
+
+      // Pac-Man horizontal position (from left outside to right outside)
+      const leftPos = -pacmanWidth + progress * (canvasRect.width + pacmanWidth);
+      pacman.style.left = leftPos + 'px';
+
+      // Check dots to "eat"
+      dots.forEach(dot => {
+        if (dot.classList.contains('eaten')) return;
+        const dotRect = dot.getBoundingClientRect();
+        // Calculate distance between center of Pacman and dot horizontally
+        const pacCenterX = leftPos + pacmanWidth * 0.7;
+        const dotCenterX = dotRect.left + dotRect.width / 2;
+
+        if (Math.abs(pacCenterX - dotCenterX) < 18) {
+          dot.classList.add('eaten');
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+
+    // Start button effect (just a pulse glow)
+    const startBtn = document.getElementById('start-btn');
+    startBtn.addEventListener('click', () => {
+      startBtn.textContent = 'GAME STARTED';
+      startBtn.disabled = true;
+      startBtn.style.cursor = 'default';
+      // Could add more game logic here later
+    });
+  })();
+</script>
+
+</body>
+</html>
