@@ -3,348 +3,320 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>NeonCraft Cyberpunk</title>
+<title>Avatar: Bioluminescent Jungle</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
 
   /* Reset */
   * {
     margin: 0; padding: 0; box-sizing: border-box;
   }
 
-  html, body {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body, html {
     height: 100%;
-    background: #000;
+    background: radial-gradient(ellipse at center, #0b1a14 0%, #000a06 90%);
     overflow-x: hidden;
-    font-family: 'Press Start 2P', cursive;
-    color: #00ffea;
-    user-select: none;
+    color: #a0f0d8;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
   }
 
-  /* Neon Grid Background */
-  body::before {
-    content: "";
+  /* Bioluminescent floating mountains */
+  #mountains {
     position: fixed;
-    top: 0; left: 50%;
+    bottom: 0;
+    left: 50%;
     transform: translateX(-50%);
-    width: 200vw;
-    height: 200vh;
+    width: 120vw;
+    height: 40vh;
     background:
-      linear-gradient(0deg, transparent 49.9%, #00334444 50%, transparent 50.1%),
-      linear-gradient(90deg, transparent 49.9%, #00334444 50%, transparent 50.1%);
-    background-size: 40px 40px;
-    animation: gridShift 60s linear infinite;
-    opacity: 0.15;
-    z-index: 0;
-  }
-  @keyframes gridShift {
-    0% {background-position: 0 0, 0 0;}
-    100% {background-position: 800px 800px, 800px 800px;}
+      radial-gradient(ellipse 600px 200px at 20% 90%, #0ff3c9cc, transparent 80%),
+      radial-gradient(ellipse 500px 150px at 50% 80%, #0af0d8cc, transparent 70%),
+      radial-gradient(ellipse 650px 220px at 80% 90%, #06c9adcc, transparent 75%);
+    clip-path: polygon(
+      0% 100%, 15% 40%, 20% 60%, 30% 30%, 45% 70%, 55% 45%, 65% 80%, 75% 35%, 85% 75%, 95% 50%, 100% 100%
+    );
+    filter: drop-shadow(0 0 10px #0af0d8bb);
+    z-index: 1;
+    animation: mountainDrift 40s ease-in-out infinite alternate;
   }
 
-  /* Pixel particles container */
-  #pixel-particles {
+  @keyframes mountainDrift {
+    0% {transform: translateX(-50%) translateY(0);}
+    100% {transform: translateX(calc(-50% + 30px)) translateY(8px);}
+  }
+
+  /* Glowing jungle foreground silhouette */
+  #jungle-foreground {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 50vh;
+    background:
+      radial-gradient(circle 120px at 15% 85%, #0fffa0aa, transparent 70%),
+      radial-gradient(circle 80px at 30% 90%, #0af0d8aa, transparent 70%),
+      radial-gradient(circle 100px at 50% 80%, #06c9adbb, transparent 70%),
+      radial-gradient(circle 110px at 75% 85%, #0fffd8aa, transparent 70%);
+    clip-path: polygon(
+      0% 100%, 10% 55%, 20% 80%, 25% 60%, 33% 90%, 40% 55%, 
+      48% 85%, 55% 60%, 62% 90%, 70% 55%, 78% 80%, 85% 50%, 95% 85%, 100% 60%, 100% 100%, 0% 100%
+    );
+    filter: drop-shadow(0 0 12px #0af0d8cc);
+    z-index: 3;
+    animation: jungleGlow 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes jungleGlow {
+    0% {filter: drop-shadow(0 0 12px #06c9adcc);}
+    100% {filter: drop-shadow(0 0 25px #0fffd8cc);}
+  }
+
+  /* Bioluminescent plants scattered */
+  .plant {
+    position: absolute;
+    border-radius: 50% 50% 40% 40% / 70% 70% 30% 30%;
+    background: #0fffc8cc;
+    box-shadow:
+      0 0 8px #0fffc8cc,
+      inset 0 0 15px #00ffccaa;
+    filter: drop-shadow(0 0 10px #00ffccbb);
+    animation: plantGlow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes plantGlow {
+    0% {filter: drop-shadow(0 0 8px #0fffc8cc);}
+    100% {filter: drop-shadow(0 0 18px #00ffccff);}
+  }
+
+  /* Specific plants with size and position */
+  .plant1 {
+    width: 20px; height: 50px;
+    bottom: 22vh; left: 12%;
+    transform: rotate(-10deg);
+    animation-delay: 0s;
+  }
+  .plant2 {
+    width: 30px; height: 40px;
+    bottom: 25vh; left: 28%;
+    transform: rotate(15deg);
+    animation-delay: 1.2s;
+  }
+  .plant3 {
+    width: 15px; height: 45px;
+    bottom: 20vh; left: 45%;
+    transform: rotate(-5deg);
+    animation-delay: 0.7s;
+  }
+  .plant4 {
+    width: 25px; height: 55px;
+    bottom: 24vh; left: 68%;
+    transform: rotate(12deg);
+    animation-delay: 1.5s;
+  }
+  .plant5 {
+    width: 18px; height: 48px;
+    bottom: 21vh; left: 82%;
+    transform: rotate(-8deg);
+    animation-delay: 0.3s;
+  }
+
+  /* Floating particles */
+  #particles {
     pointer-events: none;
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    z-index: 1;
+    z-index: 5;
+    overflow: visible;
   }
 
   /* Hero Section */
-  header.hero {
+  main {
     position: relative;
     z-index: 10;
-    padding: 6rem 1rem 4rem;
-    text-align: center;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  header.hero h1 {
-    font-size: 3rem;
-    color: #0ff;
-    text-shadow:
-      0 0 10px #0ff,
-      0 0 20px #0ff,
-      0 0 30px #0ffaa;
-    margin-bottom: 1rem;
-  }
-
-  header.hero p {
-    font-size: 1.25rem;
-    color: #33fff7cc;
-    margin-bottom: 3rem;
-    text-shadow: 0 0 5px #00fffccc;
-  }
-
-  /* Block style glowing buttons */
-  .btn {
-    display: inline-block;
-    background:
-      linear-gradient(45deg, #00fff7, #00aabb);
-    border: 4px solid #00fff7;
-    color: #000;
-    padding: 1rem 3rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow:
-      0 0 10px #00fff7,
-      0 0 30px #00fff7 inset;
-    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    letter-spacing: 0.1em;
-    user-select: none;
-    font-family: 'Press Start 2P', cursive;
-    position: relative;
-    text-transform: uppercase;
-  }
-  .btn:hover {
-    background:
-      linear-gradient(45deg, #33fff7, #007f99);
-    border-color: #33fff7;
-    box-shadow:
-      0 0 25px #33fff7,
-      0 0 50px #33fff7 inset;
-  }
-  .btn:active {
-    box-shadow:
-      inset 0 0 15px #00bbb9;
-    background:
-      linear-gradient(45deg, #008080, #005353);
-    border-color: #008080;
-  }
-
-  /* Features Section */
-  section.features {
-    max-width: 900px;
-    margin: 0 auto 4rem;
-    padding: 0 1rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2.2rem;
-    z-index: 10;
-    position: relative;
-  }
-
-  .feature-card {
-    background: #001f1f;
-    border: 3px solid #00fff7;
-    border-radius: 12px;
-    padding: 2rem 1.5rem;
-    box-shadow:
-      0 0 15px #00fff7aa inset;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .feature-card:hover {
-    transform: translateY(-8px);
-    box-shadow:
-      0 0 30px #33fff7cc inset, 0 0 25px #33fff7;
-  }
-  .feature-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #00fff7;
-    text-shadow: 0 0 8px #00fff7bb;
-  }
-  .feature-card p {
-    font-size: 0.9rem;
-    color: #66fffccc;
-  }
-
-  /* Contact Section */
-  section.contact {
-    max-width: 500px;
-    margin: 0 auto 6rem;
-    padding: 2rem 1rem;
-    background: #002222cc;
-    border: 3px solid #00fff7;
-    border-radius: 14px;
-    box-shadow:
-      0 0 25px #00fff7bb inset;
-    text-align: center;
-    z-index: 10;
-    position: relative;
-  }
-  section.contact h2 {
-    color: #00fff7;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 10px #00fff7cc;
-    font-size: 1.7rem;
-  }
-  section.contact p {
-    font-size: 1rem;
-    margin-bottom: 2rem;
-    color: #99fff7cc;
-  }
-  section.contact form {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    text-align: center;
   }
-  section.contact label {
-    text-align: left;
-    font-size: 0.8rem;
-    color: #66fff7cc;
-    letter-spacing: 0.07em;
-    user-select: none;
+
+  h1.hero-title {
+    font-size: 3.5rem;
+    color: #00ffcc;
+    text-shadow:
+      0 0 20px #00ffd1,
+      0 0 50px #00ffd1cc,
+      0 0 80px #00ffd1bb;
+    margin-bottom: 1rem;
+    line-height: 1.1;
   }
-  section.contact input,
-  section.contact textarea {
-    background: #003333cc;
-    border: 2px solid #00fff7;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.85rem;
-    color: #00fff7;
-    box-shadow: inset 0 0 8px #00fff7aa;
-    resize: vertical;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  section.contact input:focus,
-  section.contact textarea:focus {
-    outline: none;
-    border-color: #33fff7;
-    box-shadow: inset 0 0 15px #33fff7bb;
-  }
-  section.contact button {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 1rem;
-    padding: 1rem 0;
-    border-radius: 10px;
+
+  /* Glow pulse animation for call-to-action */
+  button.cta {
+    margin-top: 2rem;
+    background: linear-gradient(135deg, #00ffe7, #009f85);
     border: none;
-    background:
-      linear-gradient(45deg, #00fff7, #009999);
-    color: #001111;
+    color: #001f16;
     font-weight: 700;
+    font-size: 1.25rem;
+    padding: 1rem 3rem;
+    border-radius: 40px;
     cursor: pointer;
     box-shadow:
-      0 0 15px #00fff7,
-      0 0 40px #00fff7 inset;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    text-transform: uppercase;
+      0 0 15px #00ffe7,
+      inset 0 0 30px #00cca9;
+    transition: box-shadow 0.3s ease;
+    animation: pulseGlow 2.8s ease-in-out infinite;
   }
-  section.contact button:hover {
-    background:
-      linear-gradient(45deg, #44ffff, #00bbbb);
+  button.cta:hover {
     box-shadow:
-      0 0 30px #44ffff,
-      0 0 60px #44ffff inset;
+      0 0 30px #00ffe7,
+      inset 0 0 40px #00ffc9;
   }
-  section.contact button:disabled {
-    background: #004444cc;
-    box-shadow: none;
-    color: #005555;
-    cursor: default;
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow:
+        0 0 15px #00ffe7,
+        inset 0 0 30px #00cca9;
+    }
+    50% {
+      box-shadow:
+        0 0 35px #00fff7,
+        inset 0 0 50px #00ffb8;
+    }
   }
-  #response-msg {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    color: #00ffeaaa;
-    min-height: 1.3em;
-    text-shadow: 0 0 5px #00fff7aa;
+
+  /* Smooth scrolling sections */
+  section {
+    padding: 6rem 2rem 6rem;
+    max-width: 800px;
+    margin: 0 auto;
+    color: #8be6d1cc;
+    user-select: none;
+  }
+  section:nth-of-type(odd) {
+    background: rgba(0, 255, 204, 0.07);
+    border-radius: 20px;
+    box-shadow: 0 0 25px #00ffcacc;
+  }
+  section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #00f7d0;
+    text-shadow: 0 0 12px #00f7d0bb;
+  }
+  section p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    text-shadow: 0 0 5px #00d9b8aa;
   }
 
   /* Responsive */
   @media (max-width: 600px) {
-    header.hero h1 {
-      font-size: 2rem;
+    h1.hero-title {
+      font-size: 2.2rem;
     }
-    header.hero p {
+    button.cta {
       font-size: 1rem;
-      margin-bottom: 2rem;
+      padding: 0.75rem 2.5rem;
     }
-    section.features {
-      grid-template-columns: 1fr;
-      gap: 1.8rem;
-      padding: 0 1rem;
-    }
-    .btn {
-      padding: 0.8rem 2rem;
-      font-size: 0.9rem;
-    }
-    section.contact {
-      padding: 1.5rem 1rem;
+    section {
+      padding: 4rem 1rem 4rem;
     }
   }
 </style>
 </head>
 <body>
 
-<canvas id="pixel-particles"></canvas>
+<div id="mountains" aria-hidden="true"></div>
+<div id="jungle-foreground" aria-hidden="true"></div>
 
-<header class="hero" role="banner">
-  <h1>NEONCRAFT CYBERPUNK</h1>
-  <p>Step into a pixelated neon world where cyberpunk meets Minecraft vibes.</p>
-  <button class="btn" aria-label="Explore Now">Explore Now</button>
-</header>
+<!-- Bioluminescent plants -->
+<div class="plant plant1" aria-hidden="true"></div>
+<div class="plant plant2" aria-hidden="true"></div>
+<div class="plant plant3" aria-hidden="true"></div>
+<div class="plant plant4" aria-hidden="true"></div>
+<div class="plant plant5" aria-hidden="true"></div>
 
-<section class="features" role="region" aria-labelledby="features-title">
-  <h2 id="features-title" style="text-align:center; color:#00fff7; margin-bottom:2rem; text-shadow: 0 0 10px #00fff7cc; font-size:1.8rem;">Features</h2>
-  <article class="feature-card" tabindex="0">
-    <h3>Neon Block Design</h3>
-    <p>Experience Minecraft blocks glowing with cyberpunk neon edges and futuristic vibes.</p>
-  </article>
-  <article class="feature-card" tabindex="0">
-    <h3>Animated Pixel Particles</h3>
-    <p>Floating pixel dust adds life and movement, simulating a digital atmosphere.</p>
-  </article>
-  <article class="feature-card" tabindex="0">
-    <h3>Dark Mode Default</h3>
-    <p>Eyes-friendly night mode with electric blues and vibrant pink highlights.</p>
-  </article>
-  <article class="feature-card" tabindex="0">
-    <h3>Glowing Block Buttons</h3>
-    <p>Buttons that pop with pixel-perfect glow and a tactile cyberpunk feel.</p>
-  </article>
-</section>
+<canvas id="particles" aria-hidden="true"></canvas>
 
-<section class="contact" role="region" aria-labelledby="contact-title">
-  <h2 id="contact-title">Get in Touch</h2>
-  <p>Questions? Ideas? Drop us a message and let's build this pixelated future together.</p>
-  <form id="contact-form" novalidate>
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" required autocomplete="off" aria-required="true" />
+<main role="main" aria-label="Avatar inspired bioluminescent jungle website">
+  <h1 class="hero-title" tabindex="0">Welcome to the Bioluminescent Jungle</h1>
+  <button class="cta" aria-label="Explore the jungle">Explore the Jungle</button>
 
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required autocomplete="off" aria-required="true" />
+  <section id="about" tabindex="0" aria-labelledby="about-title">
+    <h2 id="about-title">Immersive Nature</h2>
+    <p>Step into a world where glowing plants light your path and floating mountains drift in the mist. Feel the pulse of life in this dark, vibrant jungle realm.</p>
+  </section>
 
-    <label for="message">Message</label>
-    <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
+  <section id="features" tabindex="0" aria-labelledby="features-title">
+    <h2 id="features-title">Features</h2>
+    <p>Experience smooth scrolling through lush landscapes, shimmering bioluminescent flora, and subtle drifting particles that bring the scene to life. Every detail glows with a soft, otherworldly light.</p>
+  </section>
 
-    <button type="submit" aria-label="Send message">Send</button>
-  </form>
-  <div id="response-msg" role="alert" aria-live="polite"></div>
-</section>
+  <section id="contact" tabindex="0" aria-labelledby="contact-title">
+    <h2 id="contact-title">Connect With Us</h2>
+    <p>Ready to explore deeper? Reach out and join the journey into the heart of this glowing wilderness.</p>
+  </section>
+</main>
 
 <script>
   (() => {
-    // Pixel particles canvas setup
-    const canvas = document.getElementById('pixel-particles');
+    const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
-    let width, height, particles;
+    let width, height;
+    const particlesCount = 100;
+    const particles = [];
 
-    function init() {
-      resize();
-      particles = [];
-      const count = Math.floor((width * height) / 6000);
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          size: 1 + Math.random() * 2,
-          speedX: (Math.random() - 0.5) * 0.2,
-          speedY: (Math.random() - 0.5) * 0.2,
-          opacity: 0.1 + Math.random() * 0.3,
-          flicker: Math.random() * 0.05,
-          flickerDir: 1
-        });
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = randomRange(0, width);
+        this.y = randomRange(0, height);
+        this.size = randomRange(1, 3);
+        this.speedX = randomRange(-0.15, 0.15);
+        this.speedY = randomRange(-0.05, 0.05);
+        this.alpha = randomRange(0.1, 0.5);
+        this.alphaDirection = Math.random() > 0.5 ? 1 : -1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0) this.x = width;
+        else if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height;
+        else if (this.y > height) this.y = 0;
+
+        this.alpha += 0.005 * this.alphaDirection;
+        if(this.alpha <= 0.1) this.alphaDirection = 1;
+        if(this.alpha >= 0.5) this.alphaDirection = -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(0, 255, 204, ${this.alpha.toFixed(2)})`;
+        ctx.shadowColor = `rgba(0, 255, 204, ${this.alpha.toFixed(2)})`;
+        ctx.shadowBlur = 8;
+        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        ctx.fill();
       }
     }
 
-    function resize() {
+    function init() {
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = width * devicePixelRatio;
@@ -353,66 +325,28 @@
       canvas.style.height = height + 'px';
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(devicePixelRatio, devicePixelRatio);
+
+      particles.length = 0;
+      for(let i = 0; i < particlesCount; i++) {
+        particles.push(new Particle());
+      }
     }
 
-    function draw() {
+    function animate() {
       ctx.clearRect(0, 0, width, height);
       particles.forEach(p => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-        if (p.x < 0) p.x = width;
-        else if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        else if (p.y > height) p.y = 0;
-
-        // Flicker effect
-        p.opacity += p.flicker * p.flickerDir;
-        if (p.opacity > 0.4 || p.opacity < 0.1) p.flickerDir *= -1;
-
-        ctx.fillStyle = `rgba(0, 255, 234, ${p.opacity.toFixed(2)})`;
-        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), p.size, p.size);
+        p.update();
+        p.draw();
       });
-      requestAnimationFrame(draw);
+      requestAnimationFrame(animate);
     }
 
     window.addEventListener('resize', () => {
-      resize();
       init();
     });
 
     init();
-    draw();
-
-    // Contact form handling
-    const form = document.getElementById('contact-form');
-    const responseMsg = document.getElementById('response-msg');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      responseMsg.textContent = '';
-      const btn = form.querySelector('button[type="submit"]');
-      btn.disabled = true;
-
-      // Simple validation (HTML5 required handles most)
-      const formData = new FormData(form);
-      const name = formData.get('name').trim();
-      const email = formData.get('email').trim();
-      const message = formData.get('message').trim();
-
-      if (!name || !email || !message) {
-        responseMsg.textContent = 'Please fill all fields.';
-        btn.disabled = false;
-        return;
-      }
-
-      // Fake sending delay
-      responseMsg.textContent = 'Sending...';
-      setTimeout(() => {
-        responseMsg.textContent = 'Message sent! Thanks for reaching out.';
-        btn.disabled = false;
-        form.reset();
-      }, 1800);
-    });
-
+    animate();
   })();
 </script>
 
