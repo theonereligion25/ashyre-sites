@@ -3,186 +3,170 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RAD Hair Salon | Punk Meets Pink</title>
+<title>Donkey Kong Fun Zone</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Pacifico&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-  /* Background - dark cyberpunk gradient with subtle neon pink glow */
   body {
     margin: 0;
-    background: linear-gradient(135deg, #1a001a 0%, #330033 70%, #ff1493 100%);
-    color: #ff69b4;
-    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(180deg, #4c2c00 0%, #2e1a00 100%);
+    font-family: 'Press Start 2P', cursive;
+    color: #ffd600;
     overflow-x: hidden;
-  }
-
-  /* Kites flying in the background - whimsical Mary Poppins touch */
-  .kite {
-    position: fixed;
-    top: 20%;
-    width: 60px;
-    height: 60px;
-    background: #ff69b4;
-    clip-path: polygon(50% 0%, 90% 50%, 50% 100%, 10% 50%);
-    animation: kite-fly 15s linear infinite;
-    filter: drop-shadow(0 0 6px #ff69b4);
-  }
-
-  .kite:nth-child(1) {
-    left: -80px;
-    animation-delay: 0s;
-  }
-  .kite:nth-child(2) {
-    left: -150px;
-    top: 40%;
-    animation-delay: 5s;
-    background: #ff1493;
-  }
-  .kite:nth-child(3) {
-    left: -200px;
-    top: 60%;
-    animation-delay: 10s;
-    background: #ff69b4;
-  }
-
-  @keyframes kite-fly {
-    0% { transform: translateX(0) rotate(0deg); }
-    50% { transform: translateX(120vw) rotate(15deg); }
-    100% { transform: translateX(0) rotate(0deg); }
+    user-select: none;
   }
 
   header {
     text-align: center;
-    padding: 3rem 1rem 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
+    padding: 2rem 1rem;
+    color: #ffcc00;
+    text-shadow: 2px 2px #662e00;
   }
 
   header h1 {
-    font-size: 3.5rem;
-    color: #ff69b4;
-    text-shadow: 0 0 10px #ff1493;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
   }
 
-  header h2 {
-    font-family: 'Pacifico', cursive;
-    font-size: 1.5rem;
-    color: #ffb6c1;
-    margin-top: -10px;
-    text-shadow: 0 0 4px #ff69b4;
+  header p {
+    font-size: 1rem;
+    color: #ffeb3b;
   }
 
-  main {
-    max-width: 900px;
+  .arena {
+    position: relative;
+    width: 90vw;
+    max-width: 800px;
+    height: 400px;
     margin: 2rem auto;
-    background: rgba(255, 105, 180, 0.1);
-    padding: 2rem;
+    background:
+      linear-gradient(to top, #2e1a00 10%, transparent 10%),
+      repeating-linear-gradient(45deg, #6b4a00 0, #6b4a00 5px, #4b3200 5px, #4b3200 10px);
+    border: 5px solid #ffcc00;
     border-radius: 12px;
-    box-shadow: 0 0 20px #ff1493;
+    box-shadow: 0 0 20px #ffcc00 inset;
+    overflow: visible;
   }
 
-  main p {
-    font-size: 1.25rem;
-    line-height: 1.6;
-    color: #ffc0cb;
+  /* Pixel style barrel */
+  .barrel {
+    position: absolute;
+    bottom: 60px;
+    width: 50px;
+    height: 50px;
+    background: #6b4a00;
+    border: 4px solid #4b3200;
+    border-radius: 12px;
+    box-shadow:
+      inset 8px 8px 0 #9a6f00,
+      inset -8px -8px 0 #3b2200;
+    animation: roll 5s linear infinite;
   }
 
-  .phrase {
-    margin-top: 2rem;
-    font-family: 'Pacifico', cursive;
-    font-size: 2rem;
-    text-align: center;
-    color: #ff69b4;
-    text-shadow: 0 0 15px #ff1493;
+  .barrel:nth-child(1) {
+    left: -60px;
+    animation-delay: 0s;
   }
 
-  /* Buttons styled like punk patches */
-  .btn {
-    display: inline-block;
-    background: #ff1493;
-    color: #fff;
-    padding: 1rem 2rem;
-    border: 2px solid #ff69b4;
-    border-radius: 50px;
-    font-weight: 700;
-    font-family: 'Orbitron', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    box-shadow: 0 0 15px #ff69b4;
-    transition: background 0.3s ease, color 0.3s ease;
-    margin-top: 1.5rem;
-    text-decoration: none;
+  .barrel:nth-child(2) {
+    left: -120px;
+    bottom: 120px;
+    animation-delay: 2.5s;
   }
 
-  .btn:hover {
-    background: transparent;
-    color: #ff1493;
-    border-color: #ff1493;
+  /* Barrel rolling across screen */
+  @keyframes roll {
+    0% {
+      transform: translateX(0) rotate(0deg);
+    }
+    100% {
+      transform: translateX(110vw) rotate(360deg);
+    }
+  }
+
+  /* Donkey Kong pixel art style */
+  .donkey {
+    position: absolute;
+    bottom: 110px;
+    left: 40px;
+    width: 120px;
+    height: 160px;
+    background:
+      linear-gradient(90deg, #4b2e00 25%, #6b4a00 25%);
+    border-radius: 30px 30px 20px 20px;
+    box-shadow:
+      10px 20px 0 #3b2200,
+      inset 30px 40px 0 #d2691e;
+  }
+
+  /* Banana pixel */
+  .banana {
+    position: absolute;
+    top: 60px;
+    right: 60px;
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(135deg, #ffe135, #fcd440);
+    border-radius: 50% / 100%;
+    box-shadow: inset -5px 0 #d4af37;
+    transform: rotate(15deg);
+    animation: bounce 3s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0) rotate(15deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(15deg);
+    }
+  }
+
+  /* Jumping hero */
+  .hero {
+    position: absolute;
+    bottom: 70px;
+    left: 200px;
+    width: 60px;
+    height: 100px;
+    background: #d2691e;
+    border-radius: 15px 15px 10px 10px;
+    box-shadow:
+      inset 10px 10px 0 #a0522d,
+      inset -10px -10px 0 #8b4513;
+    animation: jump 4s ease-in-out infinite;
+  }
+
+  @keyframes jump {
+    0%, 100% { bottom: 70px; }
+    50% { bottom: 150px; }
   }
 
   footer {
     text-align: center;
-    padding: 1rem;
-    font-size: 0.9rem;
-    color: #ffb6c1;
-  }
-  
-  /* Punk-rock glitch effect on header */
-  @keyframes glitch {
-    0% {
-      clip: rect(44px, 9999px, 56px, 0);
-      transform: skew(0.5deg);
-    }
-    20% {
-      clip: rect(12px, 9999px, 68px, 0);
-      transform: skew(-0.5deg);
-    }
-    40% {
-      clip: rect(80px, 9999px, 98px, 0);
-      transform: skew(0.5deg);
-    }
-    60% {
-      clip: rect(44px, 9999px, 56px, 0);
-      transform: skew(-0.5deg);
-    }
-    80% {
-      clip: rect(12px, 9999px, 68px, 0);
-      transform: skew(0.5deg);
-    }
-    100% {
-      clip: rect(44px, 9999px, 56px, 0);
-      transform: skew(0);
-    }
-  }
-
-  header h1 {
-    position: relative;
-    animation: glitch 2s infinite;
+    color: #ffcc00;
+    font-size: 0.8rem;
+    margin-top: 3rem;
+    text-shadow: 1px 1px #662e00;
   }
 </style>
 </head>
 <body>
-  <div class="kite"></div>
-  <div class="kite"></div>
-  <div class="kite"></div>
-
   <header>
-    <h1>RAD Hair Salon</h1>
-    <h2>Where Punk Meets Pink</h2>
+    <h1>Donkey Kong Fun Zone</h1>
+    <p>Barrels roll, bananas fly, and the hero jumps for glory!</p>
   </header>
 
-  <main>
-    <p>Welcome to RAD — the wild heart of hair where heavy metal, punk rock, and cyberpunk collide in a kaleidoscope of neon pink. This isn’t just a salon; it’s a rebellion wrapped in style, a spark of edgy creativity that turns your hair into a statement.</p>
-    <p>Our artists combine razor-sharp cuts with electric colors and attitude. Think mohawks, spikes, cyber-inspired neon streaks, and a vibe that’s as punk as it is playful. And yes, there are kites flying in the background — because every rockstar needs a little magic.</p>
-
-    <div class="phrase">“A spoonful of sugar makes something amazing”</div>
-
-    <a href="#book" class="btn">Book Your Rebellion</a>
-  </main>
+  <div class="arena" aria-label="Donkey Kong game scene">
+    <div class="donkey" aria-label="Donkey Kong"></div>
+    <div class="barrel" aria-label="Rolling barrel"></div>
+    <div class="barrel" aria-label="Rolling barrel"></div>
+    <div class="banana" aria-label="Banana"></div>
+    <div class="hero" aria-label="Jumping hero"></div>
+  </div>
 
   <footer>
-    &copy; 2026 RAD Hair Salon — punk, pink, and unapologetically YOU.
+    © 1981 Nintendo - Just for fun by Paul & Ashyre
   </footer>
 </body>
 </html>
