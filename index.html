@@ -1,798 +1,188 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pinky’s Neon Arcade</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RAD Hair Salon | Punk Meets Pink</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Pacifico&display=swap');
 
-    /* Reset */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
+  /* Background - dark cyberpunk gradient with subtle neon pink glow */
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #1a001a 0%, #330033 70%, #ff1493 100%);
+    color: #ff69b4;
+    font-family: 'Orbitron', sans-serif;
+    overflow-x: hidden;
+  }
 
-    html, body {
-      height: 100%;
-      background:
-        radial-gradient(circle at center bottom, #0a0020 30%, #000000 90%);
-      font-family: 'Press Start 2P', cursive;
-      color: #ff4ccd;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
-      perspective: 1000px;
-      -webkit-font-smoothing: crisp-edges;
-      user-select: none;
-    }
+  /* Kites flying in the background - whimsical Mary Poppins touch */
+  .kite {
+    position: fixed;
+    top: 20%;
+    width: 60px;
+    height: 60px;
+    background: #ff69b4;
+    clip-path: polygon(50% 0%, 90% 50%, 50% 100%, 10% 50%);
+    animation: kite-fly 15s linear infinite;
+    filter: drop-shadow(0 0 6px #ff69b4);
+  }
 
-    /* Glowing arcade grid floor */
-    body::before {
-      content: "";
-      position: fixed;
-      bottom: 0; left: 50%;
-      transform: translateX(-50%) rotateX(75deg) translateZ(0);
-      width: 200vw;
-      height: 300px;
-      background:
-        linear-gradient(0deg, transparent 49.9%, #ff4ccd55 50%, transparent 50.1%),
-        linear-gradient(90deg, transparent 49.9%, #ff4ccd55 50%, transparent 50.1%);
-      background-size: 40px 40px;
-      box-shadow: 0 0 30px #ff4ccdaa inset;
-      animation: gridPulse 5s infinite alternate ease-in-out;
-      z-index: 0;
-      pointer-events: none;
-    }
-    @keyframes gridPulse {
-      0% {
-        background-color: transparent;
-        box-shadow: 0 0 15px #ff4ccd88 inset;
-      }
-      100% {
-        background-color: #33002733;
-        box-shadow: 0 0 40px #ff4ccdff inset;
-      }
-    }
+  .kite:nth-child(1) {
+    left: -80px;
+    animation-delay: 0s;
+  }
+  .kite:nth-child(2) {
+    left: -150px;
+    top: 40%;
+    animation-delay: 5s;
+    background: #ff1493;
+  }
+  .kite:nth-child(3) {
+    left: -200px;
+    top: 60%;
+    animation-delay: 10s;
+    background: #ff69b4;
+  }
 
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 4rem 1rem 6rem;
-      position: relative;
-      z-index: 10;
-    }
+  @keyframes kite-fly {
+    0% { transform: translateX(0) rotate(0deg); }
+    50% { transform: translateX(120vw) rotate(15deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+  }
 
-    /* Title */
-    header h1 {
-      font-size: 3rem;
-      color: #ff4ccd;
-      text-align: center;
-      text-shadow:
-        0 0 8px #ff4ccd,
-        0 0 20px #ff4ccdbb,
-        0 0 40px #ff4ccddd;
-      margin-bottom: 1rem;
-      user-select: none;
-      letter-spacing: 0.15em;
-    }
+  header {
+    text-align: center;
+    padding: 3rem 1rem 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
 
-    header p {
-      color: #ff7ad1cc;
-      text-align: center;
-      font-size: 1rem;
-      margin-bottom: 3rem;
-      text-shadow: 0 0 6px #ff4ccdaa;
-      user-select: none;
-    }
+  header h1 {
+    font-size: 3.5rem;
+    color: #ff69b4;
+    text-shadow: 0 0 10px #ff1493;
+  }
 
-    /* Parallax wrapper for scroll effect */
-    .parallax-wrapper {
-      perspective: 400px;
-      overflow-x: hidden;
-    }
+  header h2 {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.5rem;
+    color: #ffb6c1;
+    margin-top: -10px;
+    text-shadow: 0 0 4px #ff69b4;
+  }
 
-    /* Pinky ghosts background container */
-    #ghosts-bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none;
-      overflow: visible;
-      z-index: 1;
-      transform-style: preserve-3d;
-      will-change: transform;
-    }
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: rgba(255, 105, 180, 0.1);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #ff1493;
+  }
 
-    /* Pinky ghost shape */
-    .ghost {
-      position: absolute;
-      width: 70px;
-      height: 70px;
-      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-      background:
-        linear-gradient(180deg, #ff4ccd 0%, #d5007f 100%);
-      box-shadow:
-        0 0 16px #ff4ccdcc,
-        inset 0 -10px 20px #d5007fcc;
-      filter: drop-shadow(0 0 10px #ff4ccddd);
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-      overflow: hidden;
-    }
-    .ghost::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 20px;
-      background: inherit;
-      border-radius: 0 0 50% 50% / 0 0 100% 100%;
-      clip-path: polygon(
-        0% 0%, 12% 100%, 24% 0%, 36% 100%, 48% 0%, 60% 100%, 
-        72% 0%, 84% 100%, 96% 0%, 100% 100%
-      );
-      filter: brightness(1.1);
-    }
+  main p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #ffc0cb;
+  }
 
-    /* Ghost eyes container */
-    .eyes {
-      position: absolute;
-      top: 22px;
-      left: 15px;
-      width: 40px;
-      height: 18px;
-      display: flex;
-      justify-content: space-between;
-      z-index: 10;
-    }
+  .phrase {
+    margin-top: 2rem;
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem;
+    text-align: center;
+    color: #ff69b4;
+    text-shadow: 0 0 15px #ff1493;
+  }
 
-    /* Eye whites */
-    .eye {
-      width: 18px;
-      height: 18px;
-      background: #fff;
-      border-radius: 50% / 65%;
-      box-shadow: 0 0 8px #fffccc;
-      overflow: hidden;
-      position: relative;
-      filter: drop-shadow(0 0 3px #fffddfcc);
-    }
+  /* Buttons styled like punk patches */
+  .btn {
+    display: inline-block;
+    background: #ff1493;
+    color: #fff;
+    padding: 1rem 2rem;
+    border: 2px solid #ff69b4;
+    border-radius: 50px;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    box-shadow: 0 0 15px #ff69b4;
+    transition: background 0.3s ease, color 0.3s ease;
+    margin-top: 1.5rem;
+    text-decoration: none;
+  }
 
-    /* Pupils */
-    .pupil {
-      position: absolute;
-      top: 5px;
-      left: 6px;
-      width: 6px;
-      height: 8px;
-      background: #222;
-      border-radius: 50%;
-      animation: pupilDrift 3.5s infinite alternate ease-in-out;
-      filter: drop-shadow(0 0 3px #000d);
-    }
+  .btn:hover {
+    background: transparent;
+    color: #ff1493;
+    border-color: #ff1493;
+  }
 
-    @keyframes pupilDrift {
-      0% { transform: translateX(0) translateY(0); }
-      50% { transform: translateX(4px) translateY(1px); }
-      100% { transform: translateX(0) translateY(0); }
+  footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #ffb6c1;
+  }
+  
+  /* Punk-rock glitch effect on header */
+  @keyframes glitch {
+    0% {
+      clip: rect(44px, 9999px, 56px, 0);
+      transform: skew(0.5deg);
     }
+    20% {
+      clip: rect(12px, 9999px, 68px, 0);
+      transform: skew(-0.5deg);
+    }
+    40% {
+      clip: rect(80px, 9999px, 98px, 0);
+      transform: skew(0.5deg);
+    }
+    60% {
+      clip: rect(44px, 9999px, 56px, 0);
+      transform: skew(-0.5deg);
+    }
+    80% {
+      clip: rect(12px, 9999px, 68px, 0);
+      transform: skew(0.5deg);
+    }
+    100% {
+      clip: rect(44px, 9999px, 56px, 0);
+      transform: skew(0);
+    }
+  }
 
-    /* Different ghost animations for floating */
-    .ghost-anim1 {
-      animation: floatGhost1 18s ease-in-out infinite alternate;
-    }
-    .ghost-anim2 {
-      animation: floatGhost2 20s ease-in-out infinite alternate reverse;
-    }
-    .ghost-anim3 {
-      animation: floatGhost3 22s ease-in-out infinite alternate;
-    }
-
-    @keyframes floatGhost1 {
-      0% { transform: translate3d(0, 0, 0); }
-      50% { transform: translate3d(30px, 15px, 10px); }
-      100% { transform: translate3d(0, 0, 0); }
-    }
-    @keyframes floatGhost2 {
-      0% { transform: translate3d(0, 0, 0); }
-      50% { transform: translate3d(-25px, 20px, 5px); }
-      100% { transform: translate3d(0, 0, 0); }
-    }
-    @keyframes floatGhost3 {
-      0% { transform: translate3d(0, 0, 0); }
-      50% { transform: translate3d(20px, 25px, 15px); }
-      100% { transform: translate3d(0, 0, 0); }
-    }
-
-    /* Pinky ghosts initial positions */
-    #ghosts-bg .ghost:nth-child(1) {
-      top: 15vh; left: 10vw;
-    }
-    #ghosts-bg .ghost:nth-child(2) {
-      top: 40vh; left: 30vw;
-    }
-    #ghosts-bg .ghost:nth-child(3) {
-      top: 20vh; left: 65vw;
-    }
-    #ghosts-bg .ghost:nth-child(4) {
-      top: 55vh; left: 80vw;
-    }
-
-    /* Pinky’s Pack Section */
-    section#pinkys-pack {
-      margin-top: 6rem;
-      text-align: center;
-      user-select: none;
-      position: relative;
-      z-index: 10;
-    }
-
-    section#pinkys-pack h2 {
-      font-size: 2.5rem;
-      color: #ff4ccd;
-      text-shadow:
-        0 0 10px #ff4ccd,
-        0 0 30px #ff4ccdcc;
-      margin-bottom: 2rem;
-      letter-spacing: 0.15em;
-    }
-
-    /* Dog cards grid */
-    .dog-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 2.5rem;
-      padding: 0 1rem;
-    }
-
-    /* Dog card */
-    .dog-card {
-      background: #220023cc;
-      border: 2px solid #ff4ccd88;
-      border-radius: 16px;
-      padding: 1.5rem 1rem 2rem;
-      box-shadow:
-        0 0 10px #ff4ccd55 inset;
-      transition: box-shadow 0.4s ease, border-color 0.4s ease;
-      cursor: default;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #ff85c7;
-      user-select: none;
-      position: relative;
-    }
-    .dog-card:hover {
-      border-color: #ff85c7ff;
-      box-shadow:
-        0 0 30px #ff85c7cc inset,
-        0 0 20px #ff85c7bb;
-    }
-
-    /* Neon outline dog images */
-    .dog-img {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: #000;
-      box-shadow:
-        0 0 12px #ff4ccd,
-        0 0 25px #ff4ccdcc inset;
-      border: 4px solid #ff4ccd;
-      margin-bottom: 1rem;
-      position: relative;
-      filter: drop-shadow(0 0 6px #ff4ccdaa);
-      transition: box-shadow 0.3s ease;
-    }
-    .dog-card:hover .dog-img {
-      box-shadow:
-        0 0 25px #ff85c7,
-        0 0 45px #ff85c7cc inset;
-      border-color: #ff85c7;
-    }
-
-    /* Dog names */
-    .dog-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #ff4ccd;
-      text-shadow:
-        0 0 8px #ff4ccdbb;
-    }
-
-    /* Dog card buttons */
-    .dog-btn {
-      background:
-        linear-gradient(135deg, #ff4ccd, #ff85c7);
-      border: none;
-      color: #220023;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.75rem;
-      padding: 0.75rem 1.8rem;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow:
-        0 0 15px #ff4ccd,
-        inset 0 0 30px #ff85c7;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      letter-spacing: 0.1em;
-      user-select: none;
-      outline-offset: 2px;
-      outline-color: transparent;
-      outline-style: solid;
-      outline-width: 2px;
-      position: relative;
-      z-index: 1;
-    }
-    .dog-btn:focus-visible {
-      outline-color: #ff85c7;
-    }
-    .dog-btn:hover {
-      background:
-        linear-gradient(135deg, #ff85c7, #ff4ccd);
-      box-shadow:
-        0 0 30px #ff85c7,
-        inset 0 0 45px #ff4ccd;
-    }
-
-    /* Interactive buttons container */
-    .interactive-buttons {
-      margin-top: 4rem;
-      text-align: center;
-    }
-    .interactive-buttons button {
-      background:
-        linear-gradient(135deg, #ff4ccd, #ff85c7);
-      border: none;
-      color: #220023;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.8rem;
-      padding: 1rem 2.5rem;
-      border-radius: 40px;
-      cursor: pointer;
-      box-shadow:
-        0 0 15px #ff4ccd,
-        inset 0 0 30px #ff85c7;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      margin: 0 1rem 1rem 1rem;
-      letter-spacing: 0.12em;
-      user-select: none;
-      position: relative;
-      overflow: hidden;
-    }
-    .interactive-buttons button:hover {
-      background:
-        linear-gradient(135deg, #ff85c7, #ff4ccd);
-      box-shadow:
-        0 0 30px #ff85c7,
-        inset 0 0 45px #ff4ccd;
-    }
-    .interactive-buttons button:focus-visible {
-      outline-offset: 3px;
-      outline-color: #ff85c7;
-      outline-style: solid;
-      outline-width: 3px;
-    }
-
-    /* Button clicked color toggle */
-    .clicked {
-      background:
-        linear-gradient(135deg, #2b0033, #55005c);
-      box-shadow:
-        0 0 8px #55005c inset;
-      color: #ff4ccd;
-      text-shadow:
-        0 0 10px #ff4ccd;
-      transition: none !important;
-    }
-
-    /* Popup modal */
-    #popup {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: #220023ee;
-      border: 3px solid #ff4ccd;
-      border-radius: 20px;
-      padding: 2rem 3rem;
-      box-shadow: 0 0 30px #ff4ccdcc;
-      color: #ff85c7;
-      font-size: 1rem;
-      text-align: center;
-      z-index: 99999;
-      user-select: none;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      max-width: 90vw;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    #popup.show {
-      transform: translate(-50%, -50%) scale(1);
-    }
-    #popup button.close-btn {
-      margin-top: 1.5rem;
-      background: #ff4ccd;
-      border: none;
-      color: #220023;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 0.8rem;
-      padding: 0.75rem 2rem;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow:
-        0 0 10px #ff4ccd,
-        inset 0 0 15px #ff85c7;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      letter-spacing: 0.1em;
-      user-select: none;
-    }
-    #popup button.close-btn:hover {
-      background: #ff85c7;
-      box-shadow:
-        0 0 20px #ff85c7,
-        inset 0 0 25px #ff4ccd;
-    }
-
-    /* Floating ghost spawn container */
-    #spawned-ghosts {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none;
-      overflow: visible;
-      z-index: 50;
-    }
-
-    /* Spawned ghost animation */
-    .spawned-ghost {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-      background:
-        linear-gradient(180deg, #ff4ccd 0%, #d5007f 100%);
-      box-shadow:
-        0 0 14px #ff4ccdcc,
-        inset 0 -8px 15px #d5007fcc;
-      filter: drop-shadow(0 0 10px #ff4ccddd);
-      animation: spawnedFloat 6s ease-in-out forwards;
-      overflow: hidden;
-      z-index: 1000;
-    }
-    .spawned-ghost::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 15px;
-      background: inherit;
-      border-radius: 0 0 50% 50% / 0 0 100% 100%;
-      clip-path: polygon(
-        0% 0%, 12% 100%, 24% 0%, 36% 100%, 48% 0%, 60% 100%, 
-        72% 0%, 84% 100%, 96% 0%, 100% 100%
-      );
-      filter: brightness(1.1);
-    }
-    .spawned-ghost .eyes {
-      position: absolute;
-      top: 14px;
-      left: 10px;
-      width: 30px;
-      height: 14px;
-      display: flex;
-      justify-content: space-between;
-      z-index: 10;
-    }
-    .spawned-ghost .eye {
-      width: 14px;
-      height: 14px;
-      border-radius: 50% / 65%;
-    }
-    .spawned-ghost .pupil {
-      top: 4px;
-      left: 4px;
-      width: 4px;
-      height: 6px;
-    }
-    @keyframes spawnedFloat {
-      0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-150px) scale(1.2);
-      }
-    }
-
-    /* Smooth scroll section spacing */
-    section {
-      margin: 4rem 0;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-      section#pinkys-pack h2 {
-        font-size: 1.8rem;
-      }
-      .dog-cards {
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-      }
-      .dog-img {
-        width: 90px;
-        height: 90px;
-      }
-      .dog-btn {
-        font-size: 0.65rem;
-        padding: 0.5rem 1.3rem;
-      }
-      .interactive-buttons button {
-        font-size: 0.7rem;
-        padding: 0.75rem 2rem;
-        margin: 0 0.7rem 1rem 0.7rem;
-      }
-      .ghost {
-        width: 50px;
-        height: 50px;
-      }
-    }
-  </style>
+  header h1 {
+    position: relative;
+    animation: glitch 2s infinite;
+  }
+</style>
 </head>
 <body>
-  <div id="ghosts-bg" aria-hidden="true">
-    <div class="ghost ghost-anim1" style="--x:10vw; --y:15vh;">
-      <div class="eyes">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
-      </div>
-    </div>
-    <div class="ghost ghost-anim2" style="--x:30vw; --y:40vh;">
-      <div class="eyes">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
-      </div>
-    </div>
-    <div class="ghost ghost-anim3" style="--x:65vw; --y:20vh;">
-      <div class="eyes">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
-      </div>
-    </div>
-    <div class="ghost ghost-anim1" style="--x:80vw; --y:55vh;">
-      <div class="eyes">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
-      </div>
-    </div>
-  </div>
+  <div class="kite"></div>
+  <div class="kite"></div>
+  <div class="kite"></div>
 
-  <div class="container parallax-wrapper" id="main-container">
-    <header>
-      <h1 tabindex="0" aria-label="Pinky's Neon Arcade Title">PINKY’S NEON ARCADE</h1>
-      <p tabindex="0">Where classic Pac-Man charm meets cyberpunk neon chaos.</p>
-    </header>
+  <header>
+    <h1>RAD Hair Salon</h1>
+    <h2>Where Punk Meets Pink</h2>
+  </header>
 
-    <section id="pinkys-pack" aria-label="Pinky's Pack dog showcase" tabindex="0">
-      <h2>Pinky’s Pack</h2>
-      <div class="dog-cards" role="list">
-        <article class="dog-card" role="listitem" tabindex="0" aria-describedby="desc-dog1">
-          <div class="dog-img" aria-hidden="true" style="background-image:url('https://i.imgur.com/6K2xFjZ.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-          <div class="dog-name" id="desc-dog1">Neon Pup</div>
-          <button class="dog-btn" aria-label="Show fun animation for Neon Pup">Woof Fun!</button>
-        </article>
-        <article class="dog-card" role="listitem" tabindex="0" aria-describedby="desc-dog2">
-          <div class="dog-img" aria-hidden="true" style="background-image:url('https://i.imgur.com/8Z8yV6Z.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-          <div class="dog-name" id="desc-dog2">Cyber Hound</div>
-          <button class="dog-btn" aria-label="Show fun animation for Cyber Hound">Zap Tail!</button>
-        </article>
-        <article class="dog-card" role="listitem" tabindex="0" aria-describedby="desc-dog3">
-          <div class="dog-img" aria-hidden="true" style="background-image:url('https://i.imgur.com/N9Qqz1m.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-          <div class="dog-name" id="desc-dog3">Pixel Pup</div>
-          <button class="dog-btn" aria-label="Show fun animation for Pixel Pup">Pixel Dance!</button>
-        </article>
-        <article class="dog-card" role="listitem" tabindex="0" aria-describedby="desc-dog4">
-          <div class="dog-img" aria-hidden="true" style="background-image:url('https://i.imgur.com/7aGfU9W.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-          <div class="dog-name" id="desc-dog4">Glitch Terrier</div>
-          <button class="dog-btn" aria-label="Show fun animation for Glitch Terrier">Glitch Pop!</button>
-        </article>
-      </div>
-    </section>
+  <main>
+    <p>Welcome to RAD — the wild heart of hair where heavy metal, punk rock, and cyberpunk collide in a kaleidoscope of neon pink. This isn’t just a salon; it’s a rebellion wrapped in style, a spark of edgy creativity that turns your hair into a statement.</p>
+    <p>Our artists combine razor-sharp cuts with electric colors and attitude. Think mohawks, spikes, cyber-inspired neon streaks, and a vibe that’s as punk as it is playful. And yes, there are kites flying in the background — because every rockstar needs a little magic.</p>
 
-    <section class="interactive-buttons" aria-label="Interactive arcade buttons">
-      <button id="color-toggle-btn" aria-pressed="false">Toggle Color</button>
-      <button id="spawn-ghost-btn" aria-label="Spawn a floating Pinky ghost">Spawn Ghost</button>
-      <button id="arcade-sound-btn">Arcade Beep</button>
-    </section>
-  </div>
+    <div class="phrase">“A spoonful of sugar makes something amazing”</div>
 
-  <div id="spawned-ghosts" aria-hidden="true"></div>
+    <a href="#book" class="btn">Book Your Rebellion</a>
+  </main>
 
-  <div id="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title" tabindex="-1" hidden>
-    <p id="popup-message"></p>
-    <button class="close-btn" aria-label="Close popup">CLOSE</button>
-  </div>
-
-  <script>
-    (() => {
-      const container = document.getElementById('main-container');
-      const popup = document.getElementById('popup');
-      const popupMessage = document.getElementById('popup-message');
-      const popupCloseBtn = popup.querySelector('.close-btn');
-      const spawnedGhostsContainer = document.getElementById('spawned-ghosts');
-
-      // Parallax scroll effect for ghosts bg
-      const ghostsBg = document.getElementById('ghosts-bg');
-      window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-        // subtle 3D parallax by rotating and translating the ghosts background
-        const rotateX = Math.min(scrollY / 15, 8);
-        const translateZ = Math.min(scrollY / 10, 40);
-        ghostsBg.style.transform = `translateZ(${translateZ}px) rotateX(${rotateX}deg)`;
-      });
-
-      // Dog card button animations and popup messages
-      const dogButtons = document.querySelectorAll('.dog-btn');
-      dogButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          playArcadeSound('pop');
-          const card = btn.closest('.dog-card');
-          card.classList.add('glow-anim');
-          setTimeout(() => card.classList.remove('glow-anim'), 800);
-
-          // Show popup with fun message
-          const dogName = card.querySelector('.dog-name').textContent;
-          const messages = {
-            'Neon Pup': "Neon Pup just wagged its tail in a dazzling light show!",
-            'Cyber Hound': "Cyber Hound zapped the grid with electric tail spins!",
-            'Pixel Pup': "Pixel Pup danced through pixels and left a trail of sparkles!",
-            'Glitch Terrier': "Glitch Terrier popped in and out of the matrix glitches!",
-          };
-          showPopup(messages[dogName] || "This pup is full of surprises!");
-        });
-      });
-
-      // Popup close handling
-      popupCloseBtn.addEventListener('click', () => {
-        hidePopup();
-      });
-      popup.addEventListener('click', (e) => {
-        if (e.target === popup) hidePopup();
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === "Escape" && !popup.hasAttribute('hidden')) {
-          hidePopup();
-        }
-      });
-
-      function showPopup(message) {
-        popupMessage.textContent = message;
-        popup.hidden = false;
-        popup.classList.add('show');
-        popup.focus();
-      }
-      function hidePopup() {
-        popup.classList.remove('show');
-        setTimeout(() => {
-          popup.hidden = true;
-          container.querySelector('h1').focus();
-        }, 300);
-      }
-
-      // Interactive buttons color toggle
-      const colorToggleBtn = document.getElementById('color-toggle-btn');
-      colorToggleBtn.addEventListener('click', () => {
-        playArcadeSound('toggle');
-        if (colorToggleBtn.classList.toggle('clicked')) {
-          colorToggleBtn.setAttribute('aria-pressed', 'true');
-          container.style.color = '#aaffff';
-          container.style.textShadow = `
-            0 0 10px #aaffff,
-            0 0 30px #44ffffbb`;
-        } else {
-          colorToggleBtn.setAttribute('aria-pressed', 'false');
-          container.style.color = '#ff4ccd';
-          container.style.textShadow = `
-            0 0 8px #ff4ccd,
-            0 0 20px #ff4ccdbb`;
-        }
-      });
-
-      // Spawn Pinky ghost on demand
-      const spawnGhostBtn = document.getElementById('spawn-ghost-btn');
-      spawnGhostBtn.addEventListener('click', () => {
-        playArcadeSound('spawn');
-        spawnGhost();
-      });
-
-      function spawnGhost() {
-        const ghost = document.createElement('div');
-        ghost.className = 'spawned-ghost';
-        ghost.style.left = `${Math.random() * 80 + 10}vw`;
-        ghost.style.bottom = '0px';
-
-        ghost.innerHTML = `
-          <div class="eyes">
-            <div class="eye"><div class="pupil"></div></div>
-            <div class="eye"><div class="pupil"></div></div>
-          </div>`;
-
-        spawnedGhostsContainer.appendChild(ghost);
-
-        // Remove ghost after animation ends
-        ghost.addEventListener('animationend', () => {
-          ghost.remove();
-        });
-      }
-
-      // Arcade beep "sounds" visual effect on buttons
-      const arcadeSoundBtn = document.getElementById('arcade-sound-btn');
-      arcadeSoundBtn.addEventListener('click', () => {
-        playArcadeSound('beep');
-      });
-
-      // Visual arcade sound animation on button
-      function playArcadeSound(type) {
-        let btn;
-        switch(type) {
-          case 'pop': btn = null; break;
-          case 'toggle': btn = document.getElementById('color-toggle-btn'); break;
-          case 'spawn': btn = document.getElementById('spawn-ghost-btn'); break;
-          case 'beep': btn = document.getElementById('arcade-sound-btn'); break;
-          default: btn = null;
-        }
-        if (!btn) return;
-
-        // Create a quick expanding neon circle effect on button
-        const ripple = document.createElement('span');
-        ripple.className = 'ripple';
-        btn.appendChild(ripple);
-
-        setTimeout(() => {
-          ripple.remove();
-        }, 600);
-      }
-
-      // Ripple style added dynamically to buttons
-      const styleSheet = document.createElement('style');
-      styleSheet.textContent = `
-        .ripple {
-          position: absolute;
-          border-radius: 50%;
-          background: rgba(255, 76, 205, 0.6);
-          width: 100px;
-          height: 100px;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%) scale(0);
-          pointer-events: none;
-          animation: rippleAnim 0.6s ease forwards;
-          filter: drop-shadow(0 0 8px #ff4ccd);
-          z-index: 10;
-        }
-        @keyframes rippleAnim {
-          to {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 0;
-          }
-        }
-        .glow-anim {
-          animation: glowPulse 0.8s ease forwards;
-        }
-        @keyframes glowPulse {
-          0% { box-shadow: 0 0 10px #ff4ccd55 inset; }
-          50% { box-shadow: 0 0 30px #ff85c7cc inset, 0 0 25px #ff85c7; }
-          100% { box-shadow: 0 0 10px #ff4ccd55 inset; }
-        }
-      `;
-      document.head.appendChild(styleSheet);
-
-    })();
-  </script>
+  <footer>
+    &copy; 2026 RAD Hair Salon — punk, pink, and unapologetically YOU.
+  </footer>
 </body>
 </html>
