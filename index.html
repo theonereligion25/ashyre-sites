@@ -3,166 +3,94 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Guess the Magic Number 42</title>
+<title>Decentralized Identity Sample</title>
 <style>
   body {
-    background: linear-gradient(135deg, #5a2a82, #b672d1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
     color: #39ff14;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
     margin: 0;
-    overflow: hidden;
-    user-select: none;
-  }
-  h1 {
-    margin-bottom: 0.2em;
-    text-shadow: 0 0 12px #39ff14;
-  }
-  .cloud {
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 50px 50px 50px 50px;
-    padding: 1em 2em;
-    margin: 1em 0;
-    color: #5a2a82;
-    font-weight: bold;
-    box-shadow: 0 0 20px #39ff14;
-    animation: pulse 2s infinite ease-in-out;
-    max-width: 80vw;
-    text-align: center;
-  }
-  @keyframes pulse {
-    0%, 100% {
-      box-shadow: 0 0 20px #39ff14;
-    }
-    50% {
-      box-shadow: 0 0 35px #a0ff7a;
-    }
-  }
-  input[type="number"] {
-    padding: 0.5em;
-    font-size: 1.2rem;
-    border-radius: 12px;
-    border: 2px solid #39ff14;
-    background: rgba(0,0,0,0.6);
-    color: #39ff14;
-    width: 100px;
-    text-align: center;
-    outline: none;
-    margin-right: 1em;
-    transition: border-color 0.3s ease;
-  }
-  input[type="number"]:focus {
-    border-color: #a0ff7a;
   }
   button {
-    padding: 0.6em 1.2em;
-    font-size: 1.2rem;
-    border-radius: 12px;
+    background: #39ff14;
     border: none;
-    background: #39ff14;
-    color: #5a2a82;
-    cursor: pointer;
+    border-radius: 8px;
+    color: #121212;
+    padding: 1em 2em;
     font-weight: bold;
-    box-shadow: 0 0 15px #39ff14;
-    transition: background 0.3s ease;
+    cursor: pointer;
+    margin-top: 1rem;
+    box-shadow: 0 0 10px #39ff14;
   }
-  button:hover {
-    background: #a0ff7a;
+  pre {
+    background: #222;
+    border-radius: 8px;
+    padding: 1em;
+    max-width: 90vw;
+    overflow-x: auto;
   }
-  #celebration {
-    position: fixed;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-    user-select: none;
-  }
-  .burst {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #39ff14;
-    border-radius: 50%;
-    opacity: 0.9;
-    animation: burstMove 1s forwards ease-out;
-  }
-  @keyframes burstMove {
-    0% {
-      transform: translate(0, 0) scale(1);
-      opacity: 0.9;
-    }
-    100% {
-      transform: translate(var(--x), var(--y)) scale(0.2);
-      opacity: 0;
-    }
+  #status {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
   }
 </style>
 </head>
 <body>
-  <h1>Guess the Magic Number</h1>
-  <div class="cloud" id="message">Pick a number between 1 and 100</div>
-  <div>
-    <input type="number" id="guessInput" min="1" max="100" />
-    <button id="guessBtn">Guess</button>
-  </div>
-  <div id="celebration"></div>
+  <h1>Decentralized Identity Demo</h1>
+  <p>Generate your cryptographic identity keypair and prove ownership with a signature challenge—no biometrics needed.</p>
+  <button id="generateKey">Generate Identity Keypair</button>
+  <button id="signChallenge" disabled>Sign Login Challenge</button>
+  <pre id="output"></pre>
+  <div id="status"></div>
 
 <script>
-  const secretNumber = 42;
-  const message = document.getElementById('message');
-  const guessInput = document.getElementById('guessInput');
-  const guessBtn = document.getElementById('guessBtn');
-  const celebration = document.getElementById('celebration');
+  let keyPair = null;
+  const output = document.getElementById('output');
+  const status = document.getElementById('status');
+  const generateBtn = document.getElementById('generateKey');
+  const signBtn = document.getElementById('signChallenge');
 
-  function burst(x, y) {
-    for(let i = 0; i < 12; i++) {
-      const dot = document.createElement('div');
-      dot.classList.add('burst');
-      const angle = (i / 12) * 2 * Math.PI;
-      const dist = 80;
-      dot.style.setProperty('--x', `${Math.cos(angle) * dist}px`);
-      dot.style.setProperty('--y', `${Math.sin(angle) * dist}px`);
-      dot.style.left = `${x}px`;
-      dot.style.top = `${y}px`;
-      celebration.appendChild(dot);
-      setTimeout(() => {
-        dot.remove();
-      }, 1000);
-    }
+  async function generateKeyPair() {
+    status.textContent = 'Generating keypair...';
+    keyPair = await window.crypto.subtle.generateKey(
+      {
+        name: "ECDSA",
+        namedCurve: "P-256",
+      },
+      true,
+      ["sign", "verify"]
+    );
+    status.textContent = 'Keypair generated. Public key exported.';
+    const publicKey = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
+    const pubKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKey)));
+    output.textContent = `Public Key (Base64):\n${pubKeyBase64}`;
+    signBtn.disabled = false;
   }
 
-  guessBtn.addEventListener('click', () => {
-    const guess = parseInt(guessInput.value);
-    if (isNaN(guess) || guess < 1 || guess > 100) {
-      message.textContent = 'Please enter a number between 1 and 100.';
-      return;
-    }
-    if (guess === secretNumber) {
-      message.textContent = '✨ You got it! The secret number is 42! ✨';
-      burst(window.innerWidth / 2, window.innerHeight / 2);
-      guessBtn.disabled = true;
-      guessInput.disabled = true;
-    } else if (guess < secretNumber) {
-      message.textContent = 'Too low — aim higher, like purple clouds floating up.';
-    } else {
-      message.textContent = 'Too high — drift down gently, like neon sparks settling.';
-    }
-    guessInput.value = '';
-    guessInput.focus();
-  });
+  async function signChallenge() {
+    if (!keyPair) return;
+    const challenge = new TextEncoder().encode("LoginChallenge:" + new Date().toISOString());
+    const signature = await window.crypto.subtle.sign(
+      {
+        name: "ECDSA",
+        hash: { name: "SHA-256" }
+      },
+      keyPair.privateKey,
+      challenge
+    );
+    const sigBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
+    output.textContent += `\n\nSigned Challenge:\n${sigBase64}`;
+    status.textContent = 'Challenge signed! Identity verified without biometrics.';
+  }
 
-  // Let enter key trigger the guess button
-  guessInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      guessBtn.click();
-    }
-  });
-
-  guessInput.focus();
+  generateBtn.addEventListener('click', generateKeyPair);
+  signBtn.addEventListener('click', signChallenge);
 </script>
 </body>
 </html>
