@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Decentralized Identity Sample</title>
+<title>Decentralized Identity Full Demo</title>
 <style>
   body {
     background: #121212;
@@ -15,6 +15,8 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
+    padding: 1em;
+    user-select: none;
   }
   button {
     background: #39ff14;
@@ -24,37 +26,74 @@
     padding: 1em 2em;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 1rem;
+    margin: 0.5rem 0;
     box-shadow: 0 0 10px #39ff14;
+    transition: background 0.3s ease;
+  }
+  button:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  button:hover:not(:disabled) {
+    background: #a0ff7a;
   }
   pre {
     background: #222;
     border-radius: 8px;
     padding: 1em;
-    max-width: 90vw;
+    width: 90vw;
+    max-width: 600px;
     overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
   #status {
     margin-top: 1rem;
     font-size: 1.2rem;
+    min-height: 1.5em;
     text-align: center;
   }
 </style>
 </head>
 <body>
-  <h1>Decentralized Identity Demo</h1>
-  <p>Generate your cryptographic identity keypair and prove ownership with a signature challenge—no biometrics needed.</p>
+  <h1>Decentralized Identity Full Demo</h1>
+  <p>Generate your cryptographic keypair, sign a server challenge, and verify identity—no biometrics needed.</p>
   <button id="generateKey">Generate Identity Keypair</button>
-  <button id="signChallenge" disabled>Sign Login Challenge</button>
+  <button id="signChallenge" disabled>Request Challenge & Sign</button>
+  <button id="verify" disabled>Verify Signature</button>
   <pre id="output"></pre>
   <div id="status"></div>
 
 <script>
   let keyPair = null;
+  let signature = null;
+  let challenge = null;
+  let publicKeyPem = null;
+
   const output = document.getElementById('output');
   const status = document.getElementById('status');
   const generateBtn = document.getElementById('generateKey');
   const signBtn = document.getElementById('signChallenge');
+  const verifyBtn = document.getElementById('verify');
+
+  // Utility: Convert ArrayBuffer to Base64
+  function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let b of bytes) {
+      binary += String.fromCharCode(b);
+    }
+    return btoa(binary);
+  }
+
+  // Export public key to PEM format (SPKI)
+  async function exportPublicKeyPem(key) {
+    const spki = await window.crypto.subtle.exportKey('spki', key);
+    const b64 = arrayBufferToBase64(spki);
+    const pem = `-----BEGIN PUBLIC KEY-----\n${b64.match(/.{1,64}/g).join('\n')}\n-----END PUBLIC KEY-----`;
+    return pem;
+  }
 
   async function generateKeyPair() {
     status.textContent = 'Generating keypair...';
@@ -66,31 +105,87 @@
       true,
       ["sign", "verify"]
     );
-    status.textContent = 'Keypair generated. Public key exported.';
-    const publicKey = await window.crypto.subtle.exportKey('spki', keyPair.publicKey);
-    const pubKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKey)));
-    output.textContent = `Public Key (Base64):\n${pubKeyBase64}`;
+    publicKeyPem = await exportPublicKeyPem(keyPair.publicKey);
+    output.textContent = `Public Key (PEM):\n${publicKeyPem}`;
+    status.textContent = 'Keypair generated.';
     signBtn.disabled = false;
+    verifyBtn.disabled = true;
+  }
+
+  async function requestChallenge() {
+    status.textContent = 'Requesting challenge from server...';
+    try {
+      const res = await fetch('/challenge');
+      const data = await res.json();
+      challenge = data.challenge;
+      status.textContent = `Challenge received: ${challenge}`;
+    } catch (e) {
+      status.textContent = 'Failed to get challenge from server.';
+      throw e;
+    }
   }
 
   async function signChallenge() {
-    if (!keyPair) return;
-    const challenge = new TextEncoder().encode("LoginChallenge:" + new Date().toISOString());
-    const signature = await window.crypto.subtle.sign(
+    if (!keyPair || !challenge) return;
+
+    status.textContent = 'Signing challenge...';
+    const encoded = new TextEncoder().encode(challenge);
+    signature = await window.crypto.subtle.sign(
       {
         name: "ECDSA",
         hash: { name: "SHA-256" }
       },
       keyPair.privateKey,
-      challenge
+      encoded
     );
-    const sigBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
-    output.textContent += `\n\nSigned Challenge:\n${sigBase64}`;
-    status.textContent = 'Challenge signed! Identity verified without biometrics.';
+    const sigBase64 = arrayBufferToBase64(signature);
+    output.textContent += `\n\nSignature (Base64):\n${sigBase64}`;
+    status.textContent = 'Challenge signed.';
+    verifyBtn.disabled = false;
   }
 
-  generateBtn.addEventListener('click', generateKeyPair);
-  signBtn.addEventListener('click', signChallenge);
+  async function verifySignature() {
+    if (!signature || !publicKeyPem || !challenge) return;
+
+    status.textContent = 'Verifying signature with server...';
+    const sigBase64 = arrayBufferToBase64(signature);
+
+    try {
+      const res = await fetch('/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          publicKeyPem,
+          signature: sigBase64,
+          challenge
+        })
+      });
+      const data = await res.json();
+      if (data.verified) {
+        status.textContent = '✅ Signature verified! Identity confirmed.';
+      } else {
+        status.textContent = '❌ Invalid signature. Verification failed.';
+      }
+    } catch (e) {
+      status.textContent = 'Verification request failed.';
+    }
+  }
+
+  generateBtn.addEventListener('click', async () => {
+    await generateKeyPair();
+    output.textContent = `Public Key (PEM):\n${publicKeyPem}`;
+  });
+
+  signBtn.addEventListener('click', async () => {
+    try {
+      await requestChallenge();
+      await signChallenge();
+    } catch {
+      status.textContent = 'Error during signing process.';
+    }
+  });
+
+  verifyBtn.addEventListener('click', verifySignature);
 </script>
 </body>
 </html>
